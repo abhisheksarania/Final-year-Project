@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100" height="100">
+  <defs>
+    <linearGradient id="blueGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00c6ff" />
+      <stop offset="100%" stop-color="#0072ff" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <path d="M256 16C173.8 16 95.6 41.9 32 84.2v100.5c0 125.9 36.1 242.2 96.3 300.4 38.5 38.9 91.5 58.8 127.7 58.8 36.2 0 89.2-19.9 127.7-58.8 60.2-58.2 96.3-174.5 96.3-300.4V84.2C416.4 41.9 338.2 16 256 16z" 
+        fill="none" 
+        stroke="url(#blueGlow)" 
+        stroke-width="12" 
+        filter="url(#glow)" />
+  <path d="M256 56C186.8 56 121.9 77.1 70 108.9v75.8c0 94.8 27.2 183.7 72.7 227.7 29.1 29.3 69 44.5 96.3 44.5s67.3-15.2 96.3-44.5c45.5-44 72.7-132.9 72.7-227.7v-75.8C356.1 77.1 291.2 56 256 56z" 
+        fill="none" 
+        stroke="url(#blueGlow)" 
+        stroke-width="12"
+        filter="url(#glow)" />
+  <path d="M220 208l-20 20 60 60 100-100-20-20-80 80z" 
+        fill="url(#blueGlow)" 
+        filter="url(#glow)" />
+</svg>

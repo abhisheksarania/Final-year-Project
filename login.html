@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - Ransomware Detection Tool{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card glow-card">
+            <div class="card-header bg-primary">
+                <h2 class="text-center"><i class="fas fa-sign-in-alt"></i> Login</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero section -->
+<div class="row mt-5">
+    <div class="col-12 text-center">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Shield Logo" class="shield-logo mb-3" width="100">
+        <h2>Ransomware Detection & Decryption Tool</h2>
+        <p class="lead">
+            Protect your files with advanced AI-powered detection and recovery solutions.
+        </p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-search fa-3x text-primary mb-3"></i>
+                <h4>Advanced Detection</h4>
+                <p>Machine learning algorithms to identify even the most sophisticated ransomware.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-key fa-3x text-warning mb-3"></i>
+                <h4>AI Decryption</h4>
+                <p>State-of-the-art decryption tools to recover your encrypted files.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="fas fa-shield-alt fa-3x text-success mb-3"></i>
+                <h4>Complete Protection</h4>
+                <p>Comprehensive security analysis and detailed reporting.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

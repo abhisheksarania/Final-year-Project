@@ -1,0 +1,320 @@
+{% extends "layout.html" %}
+
+{% block title %}Scan Report - {{ scan.filename }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-file-alt"></i> Scan Report: {{ scan.filename }}</h3>
+                <div>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                    {% if scan.is_ransomware or scan.encryption_detected %}
+                    <a href="{{ url_for('decrypt_file', scan_id=scan.id) }}" class="btn btn-warning">
+                        <i class="fas fa-key"></i> Attempt Decryption
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>File Details</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Filename:</th>
+                                <td>{{ scan.filename }}</td>
+                            </tr>
+                            <tr>
+                                <th>File Size:</th>
+                                <td>{{ scan.file_size }} bytes</td>
+                            </tr>
+                            <tr>
+                                <th>File Type:</th>
+                                <td>{{ scan.file_type }}</td>
+                            </tr>
+                            <tr>
+                                <th>Scan Date:</th>
+                                <td>{{ scan.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Scan Results</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Threat Detection:</th>
+                                <td>
+                                    {% if scan.is_ransomware %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-virus"></i> Ransomware Detected
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Clean
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Confidence:</th>
+                                <td>{{ (scan.confidence * 100)|round(2) }}%</td>
+                            </tr>
+                            <tr>
+                                <th>Entropy Score:</th>
+                                <td>
+                                    {{ scan.entropy_score|round(2) }}
+                                    {% if scan.entropy_score > 7.0 %}
+                                    <span class="badge bg-danger">High</span>
+                                    {% elif scan.entropy_score > 6.0 %}
+                                    <span class="badge bg-warning text-dark">Medium</span>
+                                    {% else %}
+                                    <span class="badge bg-success">Low</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Encryption Detected:</th>
+                                <td>
+                                    {% if scan.encryption_detected %}
+                                    <span class="badge bg-danger">Yes</span>
+                                    {% else %}
+                                    <span class="badge bg-success">No</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <h4 class="mt-4">Detailed Analysis</h4>
+                <div class="card bg-dark">
+                    <div class="card-body">
+                        {% set details = scan.analysis_details|fromjson %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Content Analysis</h5>
+                                <table class="table">
+                                    <tr>
+                                        <th>Null Byte Ratio:</th>
+                                        <td>{{ (details.null_byte_ratio * 100)|round(2) }}%</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Printable Ratio:</th>
+                                        <td>{{ (details.printable_ratio * 100)|round(2) }}%</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Compression Ratio:</th>
+                                        <td>{{ details.compression_ratio|round(2) }}</td>
+                                    </tr>
+                                    {% if scan.encryption_percentage is defined %}
+                                    <tr>
+                                        <th>Encryption Level:</th>
+                                        <td>{{ scan.encryption_percentage }}%</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Entropy Analysis</h5>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar
+                                        {% if details.entropy_analysis.value > 7.0 %}
+                                        bg-danger
+                                        {% elif details.entropy_analysis.value > 6.0 %}
+                                        bg-warning
+                                        {% else %}
+                                        bg-success
+                                        {% endif %}"
+                                        role="progressbar" 
+                                        style="width: {{ (details.entropy_analysis.value / 8 * 100)|round }}%" 
+                                        aria-valuenow="{{ details.entropy_analysis.value|round(2) }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="8">
+                                        {{ details.entropy_analysis.value|round(2) }}
+                                    </div>
+                                </div>
+                                <p>Risk Level: <span class="badge bg-{{ 'danger' if details.entropy_analysis.risk_level == 'High' else 'warning' if details.entropy_analysis.risk_level == 'Medium' else 'success' }}">
+                                    {{ details.entropy_analysis.risk_level }}
+                                </span></p>
+                                
+                                {% if details.potential_encryption_type %}
+                                <div class="alert alert-info">
+                                    <strong>Potential Encryption Type:</strong> {{ details.potential_encryption_type }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if details.encryption_metrics is defined %}
+                            <div class="col-md-4">
+                                <h5>Encryption Analysis</h5>
+                                <div class="chart-container" style="position: relative; height: 200px; width: 100%">
+                                    <canvas id="encryptionPieChart"></canvas>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if details.byte_distribution is defined %}
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Byte Distribution</h5>
+                                <p class="text-muted">This chart shows the distribution of byte values (0-255) in the file. Uniform distribution may indicate encryption.</p>
+                                <div class="chart-container" style="position: relative; height: 200px; width: 100%">
+                                    <canvas id="byteDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if scan.is_ransomware or scan.encryption_detected %}
+                <div class="alert alert-warning mt-4">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Ransomware Alert</h5>
+                    <p>This file shows characteristics consistent with ransomware or encrypted content.</p>
+                    <a href="{{ url_for('decrypt_file', scan_id=scan.id) }}" class="btn btn-warning">
+                        <i class="fas fa-key"></i> Attempt Decryption
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% set details = scan.analysis_details|fromjson %}
+        
+        // Chart Colors - Using Bootstrap's theme colors
+        const chartColors = {
+            encrypted: '#dc3545',   // Danger/red color for encrypted
+            notEncrypted: '#198754', // Success/green color for not encrypted
+            chartBackground: '#212529',
+            gridColor: '#495057'
+        };
+        
+        // Render Encryption Pie Chart if the data is available
+        {% if details.encryption_metrics is defined %}
+        const encryptionCtx = document.getElementById('encryptionPieChart').getContext('2d');
+        new Chart(encryptionCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ details.encryption_metrics.labels|tojson }},
+                datasets: [{
+                    data: {{ details.encryption_metrics.data|tojson }},
+                    backgroundColor: [chartColors.encrypted, chartColors.notEncrypted],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#fff'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Encryption Analysis',
+                        color: '#fff'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.formattedValue + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+        
+        // Render Byte Distribution Chart if the data is available
+        {% if details.byte_distribution is defined %}
+        const byteDistCtx = document.getElementById('byteDistributionChart').getContext('2d');
+        
+        // Simplified byte distribution for readability - group by ranges
+        const byteDistChart = new Chart(byteDistCtx, {
+            type: 'line',
+            data: {
+                labels: {{ details.byte_distribution.labels|tojson }},
+                datasets: [{
+                    label: 'Byte Frequency',
+                    data: {{ details.byte_distribution.data|tojson }},
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                    borderWidth: 1,
+                    fill: true,
+                    pointRadius: 0,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#adb5bd',
+                            // Show fewer labels for readability
+                            callback: function(value, index, values) {
+                                return index % 32 === 0 ? value : '';
+                            }
+                        },
+                        grid: {
+                            color: chartColors.gridColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'Byte Value (0-255)',
+                            color: '#fff'
+                        }
+                    },
+                    y: {
+                        ticks: { color: '#adb5bd' },
+                        grid: {
+                            color: chartColors.gridColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'Frequency',
+                            color: '#fff'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#fff' }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Byte Value Distribution',
+                        color: '#fff'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                return 'Frequency: ' + (value * 100).toFixed(4) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        {% endif %}
+    });
+</script>
+{% endblock %}

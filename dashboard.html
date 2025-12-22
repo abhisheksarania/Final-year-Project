@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Ransomware Detection Tool{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <i class="fas fa-shield-alt text-primary"></i> Welcome to RansomShield
+                </h2>
+                <p class="card-text">
+                    Detect and recover from ransomware attacks with our advanced AI-powered tools.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card glow-card h-100">
+            <div class="card-header bg-primary">
+                <h3><i class="fas fa-search"></i> Ransomware Detection</h3>
+            </div>
+            <div class="card-body">
+                <p>Scan files to detect potential ransomware and encryption threats.</p>
+                
+                <form id="scan-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="scan-file-input" class="custom-file-upload" id="scan-file-label">
+                            <i class="fas fa-file-upload"></i> Choose file to scan
+                        </label>
+                        <input type="file" id="scan-file-input" class="file-input">
+                    </div>
+                    
+                    <div class="progress mb-3 d-none" id="scan-progress-container">
+                        <div id="scan-progress-bar" class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p id="scan-status-text" class="small text-muted"></p>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-virus-slash"></i> Scan for Ransomware
+                    </button>
+                </form>
+                
+                <div id="scan-results" class="mt-3 d-none"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card glow-card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h3><i class="fas fa-key"></i> File Decryption</h3>
+            </div>
+            <div class="card-body">
+                <p>Recover your files with our AI-powered decryption engine.</p>
+                <a href="{{ url_for('decrypt_file') }}" class="btn btn-warning">
+                    <i class="fas fa-unlock"></i> Decrypt Files
+                </a>
+                
+                <hr>
+                
+                <h5><i class="fas fa-cogs"></i> Decryption Features:</h5>
+                <ul class="list-group list-group-flush bg-transparent">
+                    <li class="list-group-item bg-transparent">
+                        <i class="fas fa-brain text-info"></i> AI-powered decryption strategies
+                    </li>
+                    <li class="list-group-item bg-transparent">
+                        <i class="fas fa-key text-warning"></i> Encryption key detection
+                    </li>
+                    <li class="list-group-item bg-transparent">
+                        <i class="fas fa-file-alt text-success"></i> File content recovery
+                    </li>
+                    <li class="list-group-item bg-transparent">
+                        <i class="fas fa-chart-bar text-primary"></i> Detailed analysis reporting
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Scans -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> Recent Scans</h3>
+            </div>
+            <div class="card-body">
+                {% if scans %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Confidence</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scan in scans %}
+                            <tr>
+                                <td>{{ scan.filename }}</td>
+                                <td>{{ scan.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if scan.is_ransomware %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-virus"></i> Ransomware Detected
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle"></i> Clean
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ (scan.confidence * 100)|round(2) }}%</td>
+                                <td>
+                                    <a href="{{ url_for('view_report', scan_id=scan.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-file-alt"></i> Report
+                                    </a>
+                                    {% if scan.is_ransomware or scan.encryption_detected %}
+                                    <a href="{{ url_for('decrypt_file', scan_id=scan.id) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-key"></i> Decrypt
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> No scan history yet. Upload a file to start scanning.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

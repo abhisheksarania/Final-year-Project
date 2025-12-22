@@ -1,0 +1,32 @@
+stateDiagram-v2
+    [*] --> UploadFile: User Uploads Encrypted File
+    
+    state UploadFile {
+        FileSelection: Select Encrypted File
+        FileValidation: Validate File Integrity
+        FileAnalysis: Initial File Analysis
+    }
+    
+    state DecryptionProcess {
+        AIAnalysis: AI Decryption Strategy
+        KeyExtraction: Encryption Key Detection
+        DecryptionAttempt: Decryption Attempt
+        DecryptionValidation: Validate Decrypted File
+    }
+    
+    state OutcomeHandling {
+        SuccessfulDecryption: Successfully Decrypted
+        PartialDecryption: Partial Recovery
+        DecryptionFailure: Decryption Failed
+    }
+    
+    UploadFile --> DecryptionProcess: File Validated
+    DecryptionProcess --> OutcomeHandling: Decryption Completed
+    OutcomeHandling --> [*]
+    
+    note right of DecryptionProcess
+        Uses machine learning 
+        to analyze encryption 
+        patterns and attempt 
+        recovery
+    end note

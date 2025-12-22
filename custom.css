@@ -1,0 +1,257 @@
+:root {
+    --primary-blue: #0075FF;
+    --secondary-blue: #0056b3;
+    --success-green: #00C853;
+    --warning-yellow: #FFD740;
+    --danger-red: #FF1744;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+    --blue-glow: 0 0 15px rgba(0, 117, 255, 0.8);
+    --shield-blue: #0098ff;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Navigation */
+.navbar-brand {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand .shield-icon {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+}
+
+/* Cards with glow effect */
+.card.glow-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card.glow-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--blue-glow);
+}
+
+/* File upload styling */
+.custom-file-upload {
+    cursor: pointer;
+    padding: 15px;
+    border: 2px dashed var(--bs-secondary);
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background-color: var(--bs-dark);
+}
+
+.custom-file-upload:hover {
+    border-color: var(--primary-blue);
+    background-color: rgba(0, 117, 255, 0.1);
+}
+
+.custom-file-upload.file-selected {
+    border-style: solid;
+    border-color: var(--success-green);
+    background-color: rgba(0, 200, 83, 0.1);
+}
+
+.file-input {
+    display: none;
+}
+
+/* Progress bar */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-success {
+    background-color: var(--success-green);
+}
+
+.status-warning {
+    background-color: var(--warning-yellow);
+}
+
+.status-danger {
+    background-color: var(--danger-red);
+}
+
+/* Decryption workflow visualization */
+.workflow-container {
+    position: relative;
+    padding: 20px 0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.workflow-step {
+    position: relative;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+    background-color: var(--bs-dark);
+    border-left: 5px solid var(--primary-blue);
+    transition: all 0.3s ease;
+}
+
+.workflow-step:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.workflow-step h4 {
+    color: var(--primary-blue);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.workflow-step h4 i {
+    font-size: 1.2em;
+}
+
+.workflow-step.active {
+    border-left-color: var(--success-green);
+    box-shadow: 0 0 15px rgba(0, 200, 83, 0.3);
+}
+
+.workflow-step.active h4 {
+    color: var(--success-green);
+}
+
+.workflow-step.failed {
+    border-left-color: var(--danger-red);
+    box-shadow: 0 0 15px rgba(255, 23, 68, 0.3);
+}
+
+.workflow-step.failed h4 {
+    color: var(--danger-red);
+}
+
+.workflow-step.partial {
+    border-left-color: var(--warning-yellow);
+    box-shadow: 0 0 15px rgba(255, 215, 64, 0.3);
+}
+
+.workflow-step.partial h4 {
+    color: var(--warning-yellow);
+}
+
+.workflow-connector {
+    position: relative;
+    margin: -20px auto 20px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.workflow-connector i {
+    font-size: 1.5rem;
+    animation: pulse 2s infinite;
+}
+
+.workflow-stats {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Results panel styling */
+.result-panel {
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.result-panel.success {
+    background-color: rgba(0, 200, 83, 0.1);
+    border: 1px solid var(--success-green);
+}
+
+.result-panel.partial {
+    background-color: rgba(255, 215, 64, 0.1);
+    border: 1px solid var(--warning-yellow);
+}
+
+.result-panel.failed {
+    background-color: rgba(255, 23, 68, 0.1);
+    border: 1px solid var(--danger-red);
+}
+
+/* Shield logo animation */
+.shield-logo {
+    transition: all 0.5s ease;
+}
+
+.shield-logo:hover {
+    filter: drop-shadow(0 0 8px var(--shield-blue));
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    padding: 20px 0;
+    margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .workflow-step {
+        padding: 15px;
+    }
+    
+    .custom-file-upload {
+        padding: 10px;
+    }
+}
